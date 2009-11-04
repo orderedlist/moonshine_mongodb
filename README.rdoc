@@ -1,0 +1,14 @@
+= Moonshine_Mongodb
+
+=== A plugin for Moonshine[http://github.com/railsmachine/moonshine]
+
+A plugin for installing and managing mongodb.
+
+=== Instructions
+
+* <tt>script/plugin install git://github.com/ACCOUNT/moonshine_mongodb.git</tt>
+* Configure settings if needed
+    configure(:mongodb => {:foo => true})
+* Include the plugin and recipe(s) in your Moonshine manifest
+    plugin :mongodb
+    recipe :mongodb
