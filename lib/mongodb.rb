@@ -15,14 +15,14 @@ module Mongodb
     }.merge(hash)
 
     package 'wget',              :ensure => :installed
+    file '/data',                :ensure => :directory
     file '/data/db',             :ensure => :directory
-    file '/var/log/mongodb'      :ensure => :directory
-    file '/var/run/MongoDB.pid', :ensure => :present
+    file '/var/log/mongodb',     :ensure => :directory
     
-    exec 'mogodb',
+    exec 'install_mogodb',
       :command => [
-        "wget http://downloads.mongodb.org/linux/mongodb-linux-x86_64-#{options[:version]}.tar.gz",
-        "tar xzf mongodb-linux-x86_64-#{options[:version]}.tar.gz",
+        "wget http://downloads.mongodb.org/linux/mongodb-linux-x86_64-#{options[:version]}.tgz",
+        "tar xzf mongodb-linux-x86_64-#{options[:version]}.tgz",
         "mv mongodb-linux-x86_64-#{options[:version]} /opt/mongo-#{options[:version]}"
       ].join(' && '),
       :cwd => '/tmp',
@@ -32,11 +32,16 @@ module Mongodb
     file '/etc/init.d/mongodb',
         :mode => '744',
         :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
-        :notify => service('mongodb')
-    
-    exec 'mongo.rc.d', :command => '/usr/sbin/update-rc.d -f mongodb defaults'
-    
-    service "mongodb", :restart => '/etc/init.d/mongodb restart', :ensure => :running
+        :before => service('mongodb')
+
+    service "mongodb",
+      :ensure => :running,
+      :enable => true,
+      :require => [
+        file('/data/db'),
+        file('/var/log/mongodb'),
+        exec('install_mogodb')
+      ]
     
   end
   
