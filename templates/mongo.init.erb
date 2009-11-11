@@ -72,7 +72,7 @@ DIETIME=10                   # Time to wait for the server to die, in seconds
                             # 'restart' will not work
 
 LOGFILE=$LOGDIR/$NAME.log  # Server logfile
-DAEMON_OPTS="--dbpath $DATA --logpath $LOGFILE run"
+DAEMON_OPTS="--dbpath $DATA run"
 
 
 # Include mongodb defaults if available
