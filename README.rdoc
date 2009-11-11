@@ -6,9 +6,7 @@ A plugin for installing and managing mongodb.
 
 === Instructions
 
-* <tt>script/plugin install git://github.com/ACCOUNT/moonshine_mongodb.git</tt>
-* Configure settings if needed
-    configure(:mongodb => {:foo => true})
+* <tt>script/plugin install git://github.com/orderedlist/moonshine_mongodb.git</tt>
 * Include the plugin and recipe(s) in your Moonshine manifest
     plugin :mongodb
     recipe :mongodb
