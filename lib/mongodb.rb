@@ -35,7 +35,7 @@ module Mongodb
         file('/opt/local'),
         package('wget')
       ]
-      
+
     file '/etc/init.d/mongodb',
         :mode => '744',
         :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
@@ -49,7 +49,6 @@ module Mongodb
         file('/var/log/mongodb'),
         exec('install_mongodb')
       ]
-    
   end
-  
+
 end
