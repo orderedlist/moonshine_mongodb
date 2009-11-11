@@ -15,19 +15,23 @@ module Mongodb
     }.merge(hash)
 
     package 'wget',              :ensure => :installed
-    file '/data',                :ensure => :directory
-    file '/data/db',             :ensure => :directory
+    file '/db',                  :ensure => :directory
+    file '/db/data',             :ensure => :directory
+    file '/opt/local',           :ensure => :directory
     file '/var/log/mongodb',     :ensure => :directory
     
     exec 'install_mogodb',
       :command => [
-        "wget http://downloads.mongodb.org/linux/mongodb-linux-x86_64-#{options[:version]}.tgz",
-        "tar xzf mongodb-linux-x86_64-#{options[:version]}.tgz",
-        "mv mongodb-linux-x86_64-#{options[:version]} /opt/mongo-#{options[:version]}"
+        "wget http://downloads.mongodb.org/linux/mongodb-linux-#{arch}-#{options[:version]}.tgz",
+        "tar xzf mongodb-linux-#{arch}-#{options[:version]}.tgz",
+        "mv mongodb-linux-#{arch}-#{options[:version]} /opt/local/mongo-#{options[:version]}"
       ].join(' && '),
       :cwd => '/tmp',
-      :creates => "/opt/mongo-#{options[:version]}/bin/mongod",
-      :require => package('wget')
+      :creates => "/opt/local/mongo-#{options[:version]}/bin/mongod",
+      :require => [
+        file('/opt/local'),
+        package('wget')
+      ]
       
     file '/etc/init.d/mongodb',
         :mode => '744',
@@ -38,7 +42,7 @@ module Mongodb
       :ensure => :running,
       :enable => true,
       :require => [
-        file('/data/db'),
+        file('/db/data'),
         file('/var/log/mongodb'),
         exec('install_mogodb')
       ]
