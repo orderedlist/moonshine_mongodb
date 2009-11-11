@@ -19,7 +19,10 @@ module Mongodb
     file '/db/data',             :ensure => :directory
     file '/opt/local',           :ensure => :directory
     file '/var/log/mongodb',     :ensure => :directory
-    
+
+    arch = Facter.architecture
+    arch = 'i686' if arch == 'i386'
+
     exec 'install_mogodb',
       :command => [
         "wget http://downloads.mongodb.org/linux/mongodb-linux-#{arch}-#{options[:version]}.tgz",
