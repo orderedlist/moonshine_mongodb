@@ -23,7 +23,7 @@ module Mongodb
     arch = Facter.architecture
     arch = 'i686' if arch == 'i386'
 
-    exec 'install_mogodb',
+    exec 'install_mongodb',
       :command => [
         "wget http://downloads.mongodb.org/linux/mongodb-linux-#{arch}-#{options[:version]}.tgz",
         "tar xzf mongodb-linux-#{arch}-#{options[:version]}.tgz",
@@ -47,7 +47,7 @@ module Mongodb
       :require => [
         file('/db/data'),
         file('/var/log/mongodb'),
-        exec('install_mogodb')
+        exec('install_mongodb')
       ]
     
   end
