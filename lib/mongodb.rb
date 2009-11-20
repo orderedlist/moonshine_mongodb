@@ -15,8 +15,8 @@ module Mongodb
     }.merge(hash)
 
     package 'wget',              :ensure => :installed
-    file '/db',                  :ensure => :directory
-    file '/db/data',             :ensure => :directory
+    file '/data',                  :ensure => :directory
+    file '/data/db',             :ensure => :directory
     file '/opt/local',           :ensure => :directory
     file '/var/log/mongodb',     :ensure => :directory
 
@@ -45,7 +45,7 @@ module Mongodb
       :ensure => :running,
       :enable => true,
       :require => [
-        file('/db/data'),
+        file('/data/db'),
         file('/var/log/mongodb'),
         exec('install_mongodb')
       ]
