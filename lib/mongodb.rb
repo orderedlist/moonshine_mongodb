@@ -11,7 +11,7 @@ module Mongodb
   #  recipe :mongodb
   def mongodb(hash = {})
     options = {
-      :version => '1.0.1'
+      :version => '1.2.1'
     }.merge(hash)
 
     package 'wget',              :ensure => :installed
