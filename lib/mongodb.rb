@@ -11,11 +11,11 @@ module Mongodb
   #  recipe :mongodb
   def mongodb(hash = {})
     options = {
-      :version => '1.2.1'
+      :version => '1.4.0'
     }.merge(hash)
 
     package 'wget',              :ensure => :installed
-    file '/data',                  :ensure => :directory
+    file '/data',                :ensure => :directory
     file '/data/db',             :ensure => :directory
     file '/opt/local',           :ensure => :directory
     file '/var/log/mongodb',     :ensure => :directory
