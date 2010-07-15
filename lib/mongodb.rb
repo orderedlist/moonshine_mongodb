@@ -1,4 +1,29 @@
+require 'pathname'
+
 module Mongodb
+  def self.included(manifest)
+    manifest.class_eval do
+      extend ClassMethods
+    end
+  end
+
+  module ClassMethods
+    def mongo_yml
+      @mongo_yml ||= Pathname.new(configuration[:deploy_to]) + 'shared/config/mongo.yml'
+    end
+
+    def mongo_rb
+      @mongo_rb ||= Pathname.new(configuration[:deploy_to]) + 'current/config/initializers/mongo.rb'
+    end
+
+    def mongo_configuration
+      configuration[:mongo][rails_env.to_sym]
+    end
+
+    def mongo_template_dir
+      @mongo_template_dir ||= Pathname.new(__FILE__).dirname.dirname.join('templates')
+    end
+  end
 
   # Define options for this plugin via the <tt>configure</tt> method
   # in your application manifest:
@@ -10,15 +35,30 @@ module Mongodb
   #  plugin :mongodb
   #  recipe :mongodb
   def mongodb(hash = {})
+    configure :mongo => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
+
     options = {
-      :version => '1.4.0'
+      :version => '1.4.4',
+      :master => false,
+      :auth => false,
+      :slave_enabled => false,
+      :slave => {
+        :auto_resync => false,
+        :source_master => '',
+        :source_port => 27017
+      }
     }.merge(hash)
 
+    # dependencies for install
     package 'wget',              :ensure => :installed
+    # default dirs for mongo storage
     file '/data',                :ensure => :directory
     file '/data/db',             :ensure => :directory
+    # install location
     file '/opt/local',           :ensure => :directory
+    # logs
     file '/var/log/mongodb',     :ensure => :directory
+
 
     arch = Facter.architecture
     arch = 'i686' if arch == 'i386'

@@ -1,0 +1,25 @@
+development: &global_settings
+  database: myapp-development
+  host: 127.0.0.1
+  port: 27017
+
+test:
+  database: myapp-test
+  <<: *global_settings
+
+cucumber:
+  database: myapp-cucumber
+  <<: *global_settings
+
+staging:
+  host: hostname
+  database: myapp-staging
+  username: username
+  password: password
+  <<: *global_settings
+
+production:
+  database: myapp
+  username: username
+  password: password
+  <<: *global_settings

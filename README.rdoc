@@ -7,6 +7,19 @@ A plugin for installing and managing mongodb.
 === Instructions
 
 * <tt>script/plugin install git://github.com/orderedlist/moonshine_mongodb.git</tt>
-* Include the plugin and recipe(s) in your Moonshine manifest
-    plugin :mongodb
+* Include the recipe in your Moonshine manifest
     recipe :mongodb
+* Create a file 'config/mongo.yml' with your settings:
+
+    development: &global_settings
+      database: myapp-development
+      host: 127.0.0.1
+      port: 27017
+
+    production:
+      database: myapp
+      username: username
+      password: password
+      <<: *global_settings
+
+* Copy over the mongo.rb initializer: <tt>cp vendor/plugins/moonshine_mongodb/templates/mongo.rb config/initializers/</tt>
