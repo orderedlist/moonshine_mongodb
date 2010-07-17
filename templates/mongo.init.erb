@@ -83,7 +83,7 @@ DAEMON_OPTS="--dbpath $DATA run"
   <% if options[:slave][:auto_resync] %>
     DAEMON_OPTS="--autoresync $DAEMON_OPTS"
   <% end %>
-  DAEMON_OPTS="--source <%= options[:slave][:master_host] %> $DAEMON_OPTS"
+  DAEMON_OPTS="--slave --source <%= options[:slave][:master_host] %> $DAEMON_OPTS"
 <% end %>
 
 # Include mongodb defaults if available
