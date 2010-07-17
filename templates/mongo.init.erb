@@ -85,7 +85,7 @@ DAEMON_OPTS="--dbpath $DATA run"
   <% if options[:slave][:auto_resync] %>
     DAEMON_OPTS="--autoresync $DAEMON_OPTS"
   <% end %>
-  DAEMON_OPTS="--source <%= options[:slave][:source_master] %>:<%= options[:slave][:source_port] %>"
+  DAEMON_OPTS="--source <%= options[:slave][:source_master] %>:<%= options[:slave][:source_port] %> $DAEMON_OPTS"
 <% end %>
 
 
