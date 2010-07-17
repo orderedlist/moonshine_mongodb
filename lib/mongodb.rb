@@ -39,14 +39,12 @@ module Mongodb
 
     options = {
       :version => '1.4.4',
-      :master => false,
+      :master? => false,
       :auth => false,
-      :slave_enabled => false,
-      :repl_password => '',
+      :slave? => false,
       :slave => {
         :auto_resync => false,
-        :source_master => '',
-        :source_port => 27017
+        :master_host => ''
       }
     }.merge(hash)
 
@@ -91,12 +89,5 @@ module Mongodb
         file('/var/log/mongodb'),
         exec('install_mongodb')
       ]
-
-    unless options[:repl_password].empty?
-      exec 'add_repl_user',
-        :command => "/opt/local/mongo-#{options[:version]}/bin/mongo local --eval 'db.addUser(\"repl\", \"#{options[:repl_password]}\")'",
-        :require => [ service('mongodb') ]
-    end
   end
-
 end
