@@ -81,7 +81,7 @@ module Mongodb
       :mode => '744',
       :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
       :before => service('mongodb'),
-      :checksum => 'md5'
+      :checksum => :md5
 
     service "mongodb",
       :ensure => :running,
