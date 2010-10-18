@@ -73,6 +73,20 @@ DIETIME=10                   # Time to wait for the server to die, in seconds
 
 LOGFILE=$LOGDIR/$NAME.log  # Server logfile
 DAEMON_OPTS="--dbpath $DATA run"
+<% if options[:master] %>
+  DAEMON_OPTS="--master $DAEMON_OPTS"
+<% end %>
+
+<% if options[:auth] %>
+  DAEMON_OPTS="--auth $DAEMON_OPTS"
+<% end %>
+
+<% if options[:slave_enabled] %>
+  <% if options[:slave][:auto_resync] %>
+    DAEMON_OPTS="--autoresync $DAEMON_OPTS"
+  <% end %>
+  DAEMON_OPTS="--source <%= options[:slave][:source_master] %>:<%= options[:slave][:source_port] %>"
+<% end %>
 
 
 # Include mongodb defaults if available
