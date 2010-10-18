@@ -39,13 +39,12 @@ module Mongodb
 
     options = {
       :version => '1.4.4',
-      :master => false,
+      :master? => false,
       :auth => false,
-      :slave_enabled => false,
+      :slave? => false,
       :slave => {
         :auto_resync => false,
-        :source_master => '',
-        :source_port => 27017
+        :master_host => ''
       }
     }.merge(hash)
 
@@ -77,9 +76,10 @@ module Mongodb
       ]
 
     file '/etc/init.d/mongodb',
-        :mode => '744',
-        :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
-        :before => service('mongodb')
+      :mode => '744',
+      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
+      :before => service('mongodb'),
+      :checksum => :md5
 
     service "mongodb",
       :ensure => :running,
@@ -90,5 +90,4 @@ module Mongodb
         exec('install_mongodb')
       ]
   end
-
 end
