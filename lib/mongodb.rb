@@ -37,57 +37,118 @@ module Mongodb
   def mongodb(hash = {})
     configure :mongo => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
 
-    options = {
-      :version => '1.4.4',
-      :master? => false,
-      :auth    => false,
-      :slave?  => false,
-      :slave   => {
-        :auto_resync => false,
-        :master_host => ''
-      }
-    }.merge(hash)
+    if ubuntu_intrepid?
+      # 10gen does not have repo support for < 9.04
 
-    # dependencies for install
-    package 'wget',              :ensure => :installed
-    # default dirs for mongo storage
-    file '/data',                :ensure => :directory
-    file '/data/db',             :ensure => :directory
-    # install location
-    file '/opt/local',           :ensure => :directory
-    # logs
-    file '/var/log/mongodb',     :ensure => :directory
+      options = {
+        :version => '1.4.4',
+        :master? => false,
+        :auth    => false,
+        :slave?  => false,
+        :slave   => {
+          :auto_resync => false,
+          :master_host => ''
+        }
+      }.merge(hash)
 
+      file '/data',                :ensure => :directory
+      file '/data/db',             :ensure => :directory
+      file '/var/log/mongodb',     :ensure => :directory
+      file '/opt/local',           :ensure => :directory
+      package 'wget',              :ensure => :installed
 
-    arch = Facter.architecture
-    arch = 'i686' if arch == 'i386'
+      arch = Facter.architecture
+      arch = 'i686' if arch == 'i386'
 
-    exec 'install_mongodb',
-      :command => [
-        "wget http://downloads.mongodb.org/linux/mongodb-linux-#{arch}-#{options[:version]}.tgz",
-        "tar xzf mongodb-linux-#{arch}-#{options[:version]}.tgz",
-        "mv mongodb-linux-#{arch}-#{options[:version]} /opt/local/mongo-#{options[:version]}"
-      ].join(' && '),
-      :cwd => '/tmp',
-      :creates => "/opt/local/mongo-#{options[:version]}/bin/mongod",
-      :require => [
-        file('/opt/local'),
-        package('wget')
-      ]
+      exec 'install_mongodb',
+        :command => [
+          "wget http://downloads.mongodb.org/linux/mongodb-linux-#{arch}-#{options[:version]}.tgz",
+          "tar xzf mongodb-linux-#{arch}-#{options[:version]}.tgz",
+          "mv mongodb-linux-#{arch}-#{options[:version]} /opt/local/mongo-#{options[:version]}"
+        ].join(' && '),
+        :cwd => '/tmp',
+        :creates => "/opt/local/mongo-#{options[:version]}/bin/mongod",
+        :require => [
+          file('/opt/local'),
+          package('wget')
+        ]
 
-    file '/etc/init.d/mongodb',
-      :mode => '744',
-      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
-      :before => service('mongodb'),
-      :checksum => :md5
+      file '/etc/init.d/mongodb',
+        :mode => '744',
+        :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongo.init.erb'), binding),
+        :before => service('mongodb'),
+        :checksum => :md5
 
-    service "mongodb",
-      :ensure => :running,
-      :enable => true,
-      :require => [
-        file('/data/db'),
-        file('/var/log/mongodb'),
-        exec('install_mongodb')
-      ]
+      service "mongodb",
+        :ensure => :running,
+        :enable => true,
+        :require => [
+          file('/data/db'),
+          file('/var/log/mongodb'),
+          exec('install_mongodb')
+        ]
+    elsif ubuntu_lucid?
+      options = {
+        :release => 'stable',
+        :dbpath => '/var/lib/mongodb',
+        :logpath => '/var/log/mongodb',
+        :port => '27017',
+        :cpu_logging => false,
+        :verbose => false,
+        :loglevel => '0',
+        
+      }.merge(hash)
+
+      file '/etc/apt/sources.list.d/mongodb.list',
+        :ensure => :present,
+        :mode => '644',
+        :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongodb.list.erb'), binding)
+
+      exec '10gen apt-key',
+        :command => 'apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10',
+        :unless => 'apt-key list | grep 7F0CEB10'
+
+      exec 'apt-get update',
+        :command => 'apt-get update',
+        :require => [
+          file('/etc/apt/sources.list.d/mongodb.list'),
+          exec('10gen apt-key')
+        ]
+
+      package "mongo-#{options[:release]}",
+        :alias => 'mongodb',
+        :ensure => :latest,
+        :require => [ exec('apt-get update') ]
+
+      file '/etc/mongodb.conf',
+        :ensure => :present,
+        :mode => '644',
+        :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongodb.conf.erb'), binding),
+        :before => service('mongodb')
+
+      file '/etc/init/mongodb.conf',
+        :ensure => :present,
+        :mode => '644',
+        :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongodb.upstart.erb'), binding),
+        :before => service('mongodb')
+
+      service 'mongodb',
+        :ensure => :running,
+        :enable => true,
+        :require => [
+          package('mongodb'),
+          file('/etc/mongodb.conf'),
+          file('/etc/init/mongodb.conf')
+        ]
+    end
+  end
+
+  private
+  def ubuntu_lucid?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
+  end
+
+  def ubuntu_intrepid?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 8.10
   end
 end
