@@ -17,7 +17,7 @@ module Mongodb
     end
 
     def mongo_configuration
-      configuration[:mongo][rails_env.to_sym]
+      configuration[:mongodb][rails_env.to_sym]
     end
 
     def mongo_template_dir
@@ -35,7 +35,7 @@ module Mongodb
   #  plugin :mongodb
   #  recipe :mongodb
   def mongodb(hash = {})
-    configure :mongo => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
+    configure :mongodb => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
 
     if ubuntu_intrepid?
       # 10gen does not have repo support for < 9.04
