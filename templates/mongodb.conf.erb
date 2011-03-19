@@ -5,16 +5,16 @@
 # Note: if you run mongodb as a non-root user (recommended) you may
 # need to create and set permissions for this directory manually,
 # e.g., if the parent directory isn't mutable by the mongodb user.
-dbpath = <%= configuration[:mongodb][:dbpath] %>
+dbpath = <%= options[:dbpath] %>
 
 #where to log
-logpath = <%= configuration[:mongodb][:logpath] %>/mongodb.log
+logpath = <%= options[:logpath] %>/mongodb.log
 logappend = true
 
-port = <%= configuration[:mongodb][:port] %>
+port = <%= options[:port] %>
 
 # Enables periodic logging of CPU utilization and I/O wait
-<% if configuration[:mongodb][:cpu_logging] %>
+<% if options[:cpu_logging] %>
 #cpu = true
 <% else %>
 cpu = true
@@ -25,7 +25,7 @@ cpu = true
 #auth = true
 
 # Verbose logging output.
-<% if configuration[:mongodb][:verbose] %>
+<% if options[:verbose] %>
 verbose = true
 <% else %>
 #verbose = true
@@ -44,7 +44,7 @@ verbose = true
 #   2=R
 #   3=both
 #   7=W+some reads
-diaglog = <%= configuration[:mongodb][:loglevel] %>
+diaglog = <%= options[:loglevel] %>
 
 # Diagnostic/debugging option
 #nocursors = true
@@ -81,25 +81,25 @@ diaglog = <%= configuration[:mongodb][:loglevel] %>
 
 # in master/slave replicated mongo databases, specify here whether
 # this is a slave or master
-<% if configuration[:mongodb][:slave] %>
+<% if options[:slave] %>
 slave = true
-<% if configuration[:mongodb][:source] %>
-source = <%= configuration[:mongodb][:source] %>
+<% if options[:source] %>
+source = <%= options[:source] %>
 <% end %>
-<% if configuration[:mongodb][:only] %>
-only = <%= configuration[:mongodb][:only] %>
+<% if options[:only] %>
+only = <%= options[:only] %>
 <% end %>
 <% end %>
-<% if configuration[:mongodb][:master] %>
+<% if options[:master] %>
 master = true
-<% if configuration[:mongodb][:source] %>
-source = <%= configuration[:mongodb][:source] %>
+<% if options[:source] %>
+source = <%= options[:source] %>
 <% end %>
 <% end %>
 
 # in replica set configuration, specify the name of the replica set
-<% if configuration[:mongodb][:replset] %>
-replSet = <%= configuration[:mongodb][:replset] %>
+<% if options[:replset] %>
+replSet = <%= options[:replset] %>
 <% else %>
 # replSet = setname
 <% end %>

@@ -115,7 +115,7 @@ module Mongodb
           exec('10gen apt-key')
         ]
 
-      if configuration[:mongodb][:release] == 'unstable'
+      if options[:release] == 'unstable'
         package "mongodb-10gen-unstable",
           :alias => 'mongodb',
           :ensure => :latest,
