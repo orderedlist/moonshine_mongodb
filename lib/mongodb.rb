@@ -116,7 +116,7 @@ module Mongodb
         ]
 
       if configuration[:mongodb][:release] == 'stable'
-        package "mongodb-10gen"
+        package "mongodb-10gen",
           :alias => 'mongodb',
           :ensure => :latest,
           :require => [ exec('apt-get update') ]
