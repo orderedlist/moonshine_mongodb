@@ -132,13 +132,17 @@ module Mongodb
         :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongodb.upstart.erb'), binding),
         :before => service('mongodb')
 
+      file '/etc/init.d/mongodb',
+        :ensure => :absent,
+        :before => service('mongodb')
+
       service 'mongodb',
         :ensure => :running,
         :enable => true,
         :require => [
           package('mongodb'),
           file('/etc/mongodb.conf'),
-          file('/etc/init/mongodb.conf')
+          file('/etc/init/mongodb.conf'),
         ]
     end
   end
