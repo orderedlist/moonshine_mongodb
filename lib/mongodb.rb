@@ -153,6 +153,7 @@ module Mongodb
         :start => 'initctl start mongodb',
         :stop => 'initctl stop mongodb',
         :restart => 'initctl restart mongodb',
+        :provider => :base,
         :enable => true,
         :require => [
           package('mongodb'),
