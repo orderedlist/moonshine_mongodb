@@ -149,6 +149,10 @@ module Mongodb
 
       service 'mongodb',
         :ensure => :running,
+        :status => 'initctl status mongodb | grep running',
+        :start => 'initctl start mongodb',
+        :stop => 'initctl stop mongodb',
+        :restart => 'initctl restart mongodb',
         :enable => true,
         :require => [
           package('mongodb'),
