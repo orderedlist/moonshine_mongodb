@@ -115,16 +115,20 @@ module Mongodb
           exec('10gen apt-key')
         ]
 
-      if configuration[:mongodb][:release] == 'stable'
-        package "mongodb-10gen",
-          :alias => 'mongodb',
-          :ensure => :latest,
-          :require => [ exec('apt-get update') ]
-      else
+      if configuration[:mongodb][:release] == 'unstable'
         package "mongodb-10gen-unstable",
           :alias => 'mongodb',
           :ensure => :latest,
-          :require => [ exec('apt-get update') ]
+          :require => [ exec('apt-get update'), package('mongodb-10gen') ]
+
+        package 'mongodb-10gen', :ensure => :absent
+      else
+        package "mongodb-10gen",
+          :alias => 'mongodb',
+          :ensure => :latest,
+          :require => [ exec('apt-get update'), package('mongodb-10gen-unstable') ]
+
+        package 'mongodb-10gen-unstable', :ensure => :absent
       end
 
       file '/etc/mongodb.conf',
