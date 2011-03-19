@@ -96,7 +96,7 @@ module Mongodb
         :cpu_logging => false,
         :verbose => false,
         :loglevel => '0',
-        
+        :journal => true
       }.merge(hash)
 
       file '/etc/apt/sources.list.d/mongodb.list',
