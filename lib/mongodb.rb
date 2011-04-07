@@ -134,7 +134,8 @@ module Mongodb
         :ensure => :present,
         :mode => '644',
         :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'mongodb.conf.erb'), binding),
-        :before => service('mongodb')
+        :before => service('mongodb'),
+        :notify => service('mongodb')
 
       file '/etc/init/mongodb.conf',
         :ensure => :present,
