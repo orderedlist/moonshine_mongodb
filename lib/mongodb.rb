@@ -35,7 +35,6 @@ module Mongodb
   #  plugin :mongodb
   #  recipe :mongodb
   def mongodb(hash = {})
-    configure :mongodb => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
 
     if ubuntu_intrepid?
       # 10gen does not have repo support for < 9.04
