@@ -34,10 +34,10 @@ module Mongodb
   #
   #  plugin :mongodb
   #  recipe :mongodb
-  def mongodb(hash = {})
+  def mongodb(options = {})
     configure :mongo => YAML::load(template(mongo_template_dir + 'mongo.yml', binding))
 
-    options = {
+    options = HashWithIndifferentAccess.new({
       :version => '1.4.4',
       :master? => false,
       :auth => false,
@@ -46,7 +46,7 @@ module Mongodb
         :auto_resync => false,
         :master_host => ''
       }
-    }.merge(hash)
+    }).merge(options)
 
     # dependencies for install
     package 'wget',              :ensure => :installed
