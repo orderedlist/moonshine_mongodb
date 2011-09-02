@@ -85,7 +85,8 @@ module Mongodb
           file('/data/db'),
           file('/var/log/mongodb'),
           exec('install_mongodb')
-        ]
+        ],
+        :before => exec('rake tasks')
     elsif ubuntu_lucid?
       options = {
         :release => 'stable',
@@ -160,7 +161,8 @@ module Mongodb
           package('mongodb'),
           file('/etc/mongodb.conf'),
           file('/etc/init/mongodb.conf'),
-        ]
+        ],
+        :before => exec('rake tasks')
     end
   end
 
