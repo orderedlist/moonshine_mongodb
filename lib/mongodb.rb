@@ -48,7 +48,7 @@ module Mongodb
           :auto_resync => false,
           :master_host => ''
         }
-      }.merge(hash).with_indifferent_access
+      }.with_indifferent_access.merge(hash.with_indifferent_access)
 
       file '/data',                :ensure => :directory
       file '/data/db',             :ensure => :directory
@@ -97,7 +97,7 @@ module Mongodb
         :verbose => false,
         :loglevel => '0',
         :journal => true
-      }.merge(hash).with_indifferent_access
+      }.with_indifferent_access.merge(hash.with_indifferent_access)
 
       file '/etc/apt/sources.list.d/mongodb.list',
         :ensure => :present,
