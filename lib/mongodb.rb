@@ -92,6 +92,7 @@ module Mongodb
         :dbpath => '/var/lib/mongodb',
         :logpath => '/var/log/mongodb',
         :port => '27017',
+        :bind_ip => '127.0.0.1',
         :cpu_logging => false,
         :verbose => false,
         :loglevel => '0',
