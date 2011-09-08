@@ -12,12 +12,13 @@ logpath = <%= options[:logpath] %>/mongodb.log
 logappend = true
 
 port = <%= options[:port] %>
+bind_ip = <%= options[:bind_ip] %>
 
 # Enables periodic logging of CPU utilization and I/O wait
 <% if options[:cpu_logging] %>
-#cpu = true
-<% else %>
 cpu = true
+<% else %>
+# cpu = true
 <% end %>
 
 # Turn on/off security.  Off is currently the default

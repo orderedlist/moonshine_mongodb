@@ -48,7 +48,7 @@ module Mongodb
           :auto_resync => false,
           :master_host => ''
         }
-      }.merge(hash).with_indifferent_access
+      }.with_indifferent_access.merge(hash.with_indifferent_access)
 
       file '/data',                :ensure => :directory
       file '/data/db',             :ensure => :directory
@@ -85,18 +85,20 @@ module Mongodb
           file('/data/db'),
           file('/var/log/mongodb'),
           exec('install_mongodb')
-        ]
+        ],
+        :before => exec('rake tasks')
     elsif ubuntu_lucid?
       options = {
         :release => 'stable',
         :dbpath => '/var/lib/mongodb',
         :logpath => '/var/log/mongodb',
         :port => '27017',
+        :bind_ip => '127.0.0.1',
         :cpu_logging => false,
         :verbose => false,
         :loglevel => '0',
         :journal => true
-      }.merge(hash).with_indifferent_access
+      }.with_indifferent_access.merge(hash.with_indifferent_access)
 
       file '/etc/apt/sources.list.d/mongodb.list',
         :ensure => :present,
@@ -159,7 +161,8 @@ module Mongodb
           package('mongodb'),
           file('/etc/mongodb.conf'),
           file('/etc/init/mongodb.conf'),
-        ]
+        ],
+        :before => exec('rake tasks')
     end
   end
 
