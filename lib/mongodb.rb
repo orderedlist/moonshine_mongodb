@@ -96,7 +96,8 @@ module Mongodb
         :cpu_logging => false,
         :verbose => false,
         :loglevel => '0',
-        :journal => true
+        :journal => true,
+        :version => :latest
       }.with_indifferent_access.merge(hash.with_indifferent_access)
 
       file '/etc/apt/sources.list.d/mongodb.list',
@@ -118,14 +119,14 @@ module Mongodb
       if options[:release] == 'unstable'
         package "mongodb-10gen-unstable",
           :alias => 'mongodb',
-          :ensure => :latest,
+          :ensure => options[:version],
           :require => [ exec('apt-get update'), package('mongodb-10gen') ]
 
         package 'mongodb-10gen', :ensure => :absent
       else
         package "mongodb-10gen",
           :alias => 'mongodb',
-          :ensure => :latest,
+          :ensure => options[:version],
           :require => [ exec('apt-get update'), package('mongodb-10gen-unstable') ]
 
         package 'mongodb-10gen-unstable', :ensure => :absent
