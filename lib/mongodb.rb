@@ -88,7 +88,6 @@ module Mongodb
         :before => exec('rake tasks')
     elsif ubuntu_lucid?
       options = {
-        :release => 'stable',
         :dbpath => '/var/lib/mongodb',
         :logpath => '/var/log/mongodb',
         :port => '27017',
@@ -116,20 +115,20 @@ module Mongodb
           exec('10gen apt-key')
         ]
 
-      if options[:release] == 'unstable'
-        package "mongodb-10gen-unstable",
+      if options[:version] =~ /1.8.\..*$/
+        package 'mongodb18-10gen',
           :alias => 'mongodb',
           :ensure => options[:version],
           :require => [ exec('apt-get update'), package('mongodb-10gen') ]
-
+        
         package 'mongodb-10gen', :ensure => :absent
       else
-        package "mongodb-10gen",
-          :alias => 'mongodb',
+        package 'mongodb-10gen',
           :ensure => options[:version],
-          :require => [ exec('apt-get update'), package('mongodb-10gen-unstable') ]
-
-        package 'mongodb-10gen-unstable', :ensure => :absent
+          :alias => 'mongodb',
+          :require => [ exec('apt-get update'), package('mongodb18-10gen') ]
+        
+        package 'mongodb18-10gen', :ensure => :absent
       end
 
       file '/etc/mongodb.conf',
